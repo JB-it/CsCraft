@@ -84,12 +84,13 @@ namespace CsCraft
             {
                 if (Raylib.IsMouseButtonPressed(MouseButton.Left))
                 {
-                    world.SetBlockAt(hitPos + lookingDir * 0.1f , "air");
+                    Vector3 placePos = hitPos + Vector3.Normalize(camera.Target - camera.Position) * 0.1f;
+                    world.SetBlockAt(placePos + new Vector3(0.5f, 0.5f, 0.5f), "air");
                 }
                 if (Raylib.IsMouseButtonPressed(MouseButton.Right))
                 {
-                    Vector3 placePos = hitPos - Vector3.Normalize(camera.Target - camera.Position) * 0.1f;
-                    world.SetBlockAt(hitPos - lookingDir * 0.1f, "dirt");
+                    Vector3 placePos = hitPos - Vector3.Normalize(camera.Target - camera.Position) * 1.1f;
+                    world.SetBlockAt(hitPos + new Vector3(0.5f, 0.5f, 0.5f), "dirt");
                 }
 
                 this.LookingAt = hitPos;
@@ -98,7 +99,7 @@ namespace CsCraft
                 this.LookingAt = Vector3.Zero;
             }
 
-                UpdateCamera();
+            UpdateCamera();
         }
 
         public void UpdateCamera()

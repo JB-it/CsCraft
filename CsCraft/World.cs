@@ -35,23 +35,12 @@ namespace CsCraft
 
         public string GetBlockAt(Vector3i position)
         {
-            int chunk_x = (position.X / Chunk.CHUNK_SIZE);
-            int chunk_y = (position.Y / Chunk.CHUNK_SIZE);
-            int chunk_z = (position.Z / Chunk.CHUNK_SIZE);
-            Vector3i chunk_pos = new Vector3i(chunk_x, chunk_y, chunk_z);
+            Vector3i chunk_pos = getChunkCoordinates(position);
 
             if (chunks.ContainsKey(chunk_pos))
             {
                 Chunk chunk = chunks[chunk_pos];
-                Vector3 local_pos = new Vector3(
-                    position.X - chunk_x * Chunk.CHUNK_SIZE,
-                    position.Y - chunk_y * Chunk.CHUNK_SIZE,
-                    position.Z - chunk_z * Chunk.CHUNK_SIZE
-                );
-
-                while (local_pos.X < 0) local_pos.X += Chunk.CHUNK_SIZE;
-                while (local_pos.Y < 0) local_pos.Y += Chunk.CHUNK_SIZE;
-                while (local_pos.Z < 0) local_pos.Z += Chunk.CHUNK_SIZE;
+                Vector3i local_pos = getCoordinatesInChunk(position);
 
                 return chunk.GetBlockAt(local_pos);
             }
@@ -66,6 +55,11 @@ namespace CsCraft
             int chunk_x = (worldPos.X / Chunk.CHUNK_SIZE);
             int chunk_y = (worldPos.Y / Chunk.CHUNK_SIZE);
             int chunk_z = (worldPos.Z / Chunk.CHUNK_SIZE);
+
+            if (worldPos.X < 0 && worldPos.X % Chunk.CHUNK_SIZE != 0) chunk_x -= 1;
+            if (worldPos.Y < 0 && worldPos.Y % Chunk.CHUNK_SIZE != 0) chunk_y -= 1;
+            if (worldPos.Z < 0 && worldPos.Z % Chunk.CHUNK_SIZE != 0) chunk_z -= 1;
+
             return new Vector3i(chunk_x, chunk_y, chunk_z);
         }
 
@@ -74,9 +68,11 @@ namespace CsCraft
             int local_x = worldPos.X % Chunk.CHUNK_SIZE;
             int local_y = worldPos.Y % Chunk.CHUNK_SIZE;
             int local_z = worldPos.Z % Chunk.CHUNK_SIZE;
-            while (local_x < 0) local_x += Chunk.CHUNK_SIZE;
-            while (local_y < 0) local_y += Chunk.CHUNK_SIZE;
-            while (local_z < 0) local_z += Chunk.CHUNK_SIZE;
+
+            if(local_x < 0) local_x += Chunk.CHUNK_SIZE - 1;
+            if(local_y < 0) local_y += Chunk.CHUNK_SIZE - 1;
+            if(local_z < 0) local_z += Chunk.CHUNK_SIZE - 1;
+
             return new Vector3i(local_x, local_y, local_z);
         } 
 
